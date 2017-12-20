@@ -221,21 +221,9 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
     }
 
     fileprivate func configureThumbnailsButton() {
-
-        if let thumbnailsButton = thumbnailsButton {
-            thumbnailsButton.addTarget(self, action: #selector(GalleryViewController.showThumbnails), for: .touchUpInside)
-            thumbnailsButton.alpha = 0
-            self.view.addSubview(thumbnailsButton)
-        }
     }
 
     fileprivate func configureDeleteButton() {
-
-        if let deleteButton = deleteButton {
-            deleteButton.addTarget(self, action: #selector(GalleryViewController.deleteItem), for: .touchUpInside)
-            deleteButton.alpha = 0
-            self.view.addSubview(deleteButton)
-        }
     }
 
     fileprivate func configureScrubber() {
