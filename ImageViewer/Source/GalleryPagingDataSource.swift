@@ -102,6 +102,16 @@ final class GalleryPagingDataSource: NSObject, UIPageViewControllerDataSource {
             itemController.displacedViewsDataSource = displacedViewsDataSource
 
             return vc
+            
+        case .unsupported(let fetchImageBlock, let message):
+            let unsupportedVC = UnsupportedViewController(index: itemIndex, itemCount: itemsDataSource.itemCount(), fetchImageBlock: fetchImageBlock, configuration: configuration, isInitialController: isInitial)
+            unsupportedVC.delegate = itemControllerDelegate
+            unsupportedVC.displacedViewsDataSource = displacedViewsDataSource
+            
+            unsupportedVC.message = message
+
+            
+            return unsupportedVC
         }
     }
 }
