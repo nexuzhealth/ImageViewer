@@ -21,4 +21,6 @@ public enum GalleryItem {
     case image(fetchImageBlock: FetchImageBlock)
     case video(fetchPreviewImageBlock: FetchImageBlock, fetchVideoBlock: FetchVideoBlock)
     case custom(fetchImageBlock: FetchImageBlock, itemViewControllerBlock: ItemViewControllerBlock)
+    case unsupported(fetchPreviewImageBlock: FetchImageBlock, message: String)
 }
+
