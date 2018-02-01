@@ -29,6 +29,8 @@ class VideoViewController: ItemBaseController<VideoView> {
     }
     var player: AVPlayer? {
         didSet {
+            scrubber.player = player
+            
             guard let player = player else { return }
 
             observingPlayer = true
