@@ -17,10 +17,10 @@ class VideoView: UIView {
 
         willSet {
 
-            if newValue == nil {
+            if let player = player {
 
-                player?.removeObserver(self, forKeyPath: "status")
-                player?.removeObserver(self, forKeyPath: "rate")
+                player.removeObserver(self, forKeyPath: "status")
+                player.removeObserver(self, forKeyPath: "rate")
             }
         }
 
