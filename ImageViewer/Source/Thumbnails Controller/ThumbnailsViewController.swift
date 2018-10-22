@@ -106,7 +106,7 @@ class ThumbnailsViewController: UICollectionViewController, UICollectionViewDele
 
         switch item {
 
-        case .image(let fetchImageBlock):
+        case .image(let fetchImageBlock), .unsupported(let fetchImageBlock, let _):
 
             fetchImageBlock() { image in
 
@@ -136,7 +136,7 @@ class ThumbnailsViewController: UICollectionViewController, UICollectionViewDele
                 }
             }
         }
-
+        
         return cell
     }
 

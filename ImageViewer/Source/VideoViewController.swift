@@ -29,6 +29,8 @@ class VideoViewController: ItemBaseController<VideoView> {
     }
     var player: AVPlayer? {
         didSet {
+            scrubber.player = player
+            
             guard let player = player else { return }
 
             observingPlayer = true
@@ -172,7 +174,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         itemView.center = scrollView.boundsCenter
     }
 
-    func playVideoInitially() {
+    @objc func playVideoInitially() {
 
         self.player?.play()
 
