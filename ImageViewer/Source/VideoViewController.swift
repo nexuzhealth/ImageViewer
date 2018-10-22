@@ -174,7 +174,7 @@ class VideoViewController: ItemBaseController<VideoView> {
         itemView.center = scrollView.boundsCenter
     }
 
-    func playVideoInitially() {
+    @objc func playVideoInitially() {
 
         self.player?.play()
 
