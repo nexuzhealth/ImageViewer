@@ -77,73 +77,11 @@ class VideoViewController: ItemBaseController<VideoView> {
         embeddedPlayButton.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin]
         self.view.addSubview(embeddedPlayButton)
         embeddedPlayButton.center = self.view.boundsCenter
-        embeddedPlayButton.addTarget(self, action: #selector(playVideoInitially), for: UIControlEvents.touchUpInside)
-        
-        itemView.isHidden = true
-        embeddedPlayButton.isHidden = true
-        scrubber.isHidden = true
-        
-        fetchVideoBlock { [weak self] (url) in
-            DispatchQueue.main.async {
-                self?.videoURL = url
-                
-                self?.finishedFetching()
-            }
-        }
-    }
-    
-    func finishedFetching() {
-        guard let _ = self.player else { return }
-        
-        scrubber.isHidden = false
-        embeddedPlayButton.isHidden = false
-        itemView.isHidden = false
-        
-        itemView.image = image
-        itemView.player = player
-        itemView.contentMode = .scaleAspectFill
-        
-        view.setNeedsLayout()
-        view.layoutIfNeeded()
-        
-        self.activityIndicatorView.stopAnimating()
-        performAutoPlay()
-    }
-    
-    public override func fetchImage() {
-        fetchImageBlock { [weak self] image in
-            DispatchQueue.main.async {
-                self?.image = image
-            }
-        }
-    }
-    
-    private var _observingPlayer = false
-    var observingPlayer: Bool {
-        get {
-            return _observingPlayer
-        }
-        set(shouldObserve) {
-            guard let player = player, shouldObserve != observingPlayer else {
-                return
-            }
-            
-            let statusKey = "status"
-            let rateKey = "rate"
-            
-            _observingPlayer = shouldObserve
-            if shouldObserve {
-                player.addObserver(self, forKeyPath: statusKey, options: NSKeyValueObservingOptions.new, context: nil)
-                player.addObserver(self, forKeyPath: rateKey, options: NSKeyValueObservingOptions.new, context: nil)
-                
-                UIApplication.shared.beginReceivingRemoteControlEvents()
-            } else {
-                player.removeObserver(self, forKeyPath: statusKey)
-                player.removeObserver(self, forKeyPath: rateKey)
-                
-                UIApplication.shared.endReceivingRemoteControlEvents()
-            }
-        }
+
+        embeddedPlayButton.addTarget(self, action: #selector(playVideoInitially), for: UIControl.Event.touchUpInside)
+
+        self.itemView.player = player
+        self.itemView.contentMode = .scaleAspectFill
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -256,7 +194,7 @@ class VideoViewController: ItemBaseController<VideoView> {
 
         if let event = event {
 
-            if event.type == UIEventType.remoteControl {
+            if event.type == UIEvent.EventType.remoteControl {
 
                 switch event.subtype {
 
