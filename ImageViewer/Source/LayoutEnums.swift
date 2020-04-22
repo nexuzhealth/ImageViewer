@@ -36,4 +36,5 @@ public enum FooterLayout {
     case pinRight(MarginBottom, MarginRight)
     case pinBoth(MarginBottom, MarginLeft, MarginRight)
     case center(MarginBottom)
+    case auto //allows the footer view to define its position via constraints
 }
