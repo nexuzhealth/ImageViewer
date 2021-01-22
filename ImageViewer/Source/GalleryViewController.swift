@@ -389,10 +389,14 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
     }
 
     fileprivate func layoutScrubber() {
-
+        var bottomInset: CGFloat = 0
+        if #available(iOS 11, *) {
+            bottomInset = view.safeAreaInsets.bottom
+        }
+        
         scrubber.bounds = CGRect(origin: CGPoint.zero, size: CGSize(width: self.view.bounds.width, height: 40))
         scrubber.center = self.view.boundsCenter
-        scrubber.frame.origin.y = (footerView?.frame.origin.y ?? self.view.bounds.maxY) - scrubber.bounds.height
+        scrubber.frame.origin.y = (footerView?.frame.origin.y ?? self.view.bounds.maxY) - scrubber.bounds.height - bottomInset
     }
 
     @objc fileprivate func deleteItem() {
