@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVKit
 
 open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
 
@@ -385,6 +386,8 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
             footer.autoresizingMask = [.flexibleTopMargin, .flexibleLeftMargin]
             footer.frame.origin = CGPoint(x: self.view.bounds.width - marginRight - footer.bounds.width, y: self.view.bounds.height - footer.bounds.height - marginBottom)
             
+        case .auto:
+            break
         }
     }
 
@@ -644,6 +647,23 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
         self.decorationViewsHidden.flip()
         animateDecorationViews(visible: !self.decorationViewsHidden)
     }
+    
+    open func itemControllerDidLongPress(_ controller: ItemController, in item: ItemView) {
+            switch (controller, item) {
+
+            case (_ as ImageViewController, let item as UIImageView):
+                guard let image = item.image else { return }
+                let activityVC = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+                self.present(activityVC, animated: true)
+
+            case (_ as VideoViewController, let item as VideoView):
+                guard let videoUrl = ((item.player?.currentItem?.asset) as? AVURLAsset)?.url else { return }
+                let activityVC = UIActivityViewController(activityItems: [videoUrl], applicationActivities: nil)
+                self.present(activityVC, animated: true)
+
+            default:  return
+            }
+        }
 
     public func itemController(_ controller: ItemController, didSwipeToDismissWithDistanceToEdge distance: CGFloat) {
 

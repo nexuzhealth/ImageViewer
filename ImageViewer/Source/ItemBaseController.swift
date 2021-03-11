@@ -438,13 +438,13 @@ open class ItemBaseController<T: UIView>: UIViewController, ItemController, UIGe
                 }
 
                 //position the image view to starting center
-                animatedImageView.center = displacedView.convertPoint(displacedView.boundsCenter, toView: self.view)
+                animatedImageView.center = displacedView.convert(displacedView.boundsCenter, to: self.view)
 
                 animatedImageView.clipsToBounds = true
                 self.view.addSubview(animatedImageView)
 
                 if displacementKeepOriginalInPlace == false {
-                    displacedView.hidden = true
+                    displacedView.isHidden = true
                 }
 
                 UIView.animate(withDuration: displacementDuration, delay: 0, usingSpringWithDamping: displacementSpringBounce, initialSpringVelocity: 1, options: .curveEaseIn, animations: { [weak self] in
@@ -460,7 +460,7 @@ open class ItemBaseController<T: UIView>: UIViewController, ItemController, UIGe
                     }, completion: { [weak self] _ in
 
                         self?.itemView.isHidden = false
-                        displacedView.hidden = false
+                        displacedView.isHidden = false
                         animatedImageView.removeFromSuperview()
 
                         self?.isAnimating = false
@@ -518,7 +518,7 @@ open class ItemBaseController<T: UIView>: UIViewController, ItemController, UIGe
             if var displacedView = self.findVisibleDisplacedView() {
 
                 if displacementKeepOriginalInPlace == false {
-                    displacedView.hidden = true
+                    displacedView.isHidden = true
                 }
 
                 UIView.animate(withDuration: reverseDisplacementDuration, animations: { [weak self] in
@@ -532,14 +532,14 @@ open class ItemBaseController<T: UIView>: UIViewController, ItemController, UIGe
                     
                     //position the image view to starting center
                     self?.itemView.bounds = displacedView.bounds
-                    self?.itemView.center = displacedView.convertPoint(displacedView.boundsCenter, toView: self!.view)
+                    self?.itemView.center = displacedView.convert(displacedView.boundsCenter, to: self!.view)
                     self?.itemView.clipsToBounds = true
                     self?.itemView.contentMode = displacedView.contentMode
 
                     }, completion: { [weak self] _ in
 
                         self?.isAnimating = false
-                        displacedView.hidden = false
+                        displacedView.isHidden = false
 
                         completion()
                 })
