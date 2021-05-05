@@ -69,7 +69,12 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
     @available(*, unavailable)
     required public init?(coder: NSCoder) { fatalError() }
 
-    public init(startIndex: Int, itemsDataSource: GalleryItemsDataSource, itemsDelegate: GalleryItemsDelegate? = nil, displacedViewsDataSource: GalleryDisplacedViewsDataSource? = nil, configuration: GalleryConfiguration = []) {
+    public init(startIndex: Int, itemsDataSource: GalleryItemsDataSource,
+                itemsDelegate: GalleryItemsDelegate? = nil,
+                displacedViewsDataSource: GalleryDisplacedViewsDataSource? = nil,
+                configuration: GalleryConfiguration = [.footerViewLayout(.auto),
+                                                                                                                                                                                                                               .headerViewLayout(.pinLeft(0, 0)),
+                                                                                                                                                                                                                               .closeLayout(.pinRight(0, 0))]) {
 
         self.currentIndex = startIndex
         self.itemsDelegate = itemsDelegate
@@ -304,31 +309,38 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
         layoutHeaderView()
         layoutFooterView()
         layoutScrubber()
+                
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            self.layoutHeaderView()
+            self.layoutButton(self.closeButton, layout: self.closeLayout)
+        }
     }
 
     fileprivate func layoutButton(_ button: UIButton?, layout: ButtonLayout) {
 
         guard let button = button else { return }
-
+        let dev = UIDevice.current
+        
         switch layout {
 
         case .pinRight(let marginTop, let marginRight):
 
             button.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
-            button.frame.origin.x = self.view.bounds.size.width - marginRight - button.bounds.size.width
-            button.frame.origin.y = marginTop
+            button.frame.origin.x = self.view.bounds.size.width - marginRight - button.bounds.size.width - dev.sidePadding
+            button.frame.origin.y = marginTop + dev.topPadding
 
         case .pinLeft(let marginTop, let marginLeft):
 
             button.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
-            button.frame.origin.x = marginLeft
-            button.frame.origin.y = marginTop
+            button.frame.origin.x = marginLeft + dev.sidePadding
+            button.frame.origin.y = marginTop + dev.topPadding
         }
     }
 
     fileprivate func layoutHeaderView() {
 
         guard let header = headerView else { return }
+        let dev = UIDevice.current
 
         switch headerLayout {
 
@@ -336,24 +348,24 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
 
             header.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin, .flexibleRightMargin]
             header.center = self.view.boundsCenter
-            header.frame.origin.y = marginTop
+            header.frame.origin.y = marginTop + dev.topPadding
 
-        case .pinBoth(let marginTop, let marginLeft,let marginRight):
+        case .pinBoth(let marginTop, let marginLeft, let marginRight):
 
             header.autoresizingMask = [.flexibleBottomMargin, .flexibleWidth]
-            header.bounds.size.width = self.view.bounds.width - marginLeft - marginRight
+            header.bounds.size.width = self.view.bounds.width - marginLeft - marginRight - dev.sidePadding*2
             header.sizeToFit()
-            header.frame.origin = CGPoint(x: marginLeft, y: marginTop)
+            header.frame.origin = CGPoint(x: marginLeft + dev.sidePadding, y: marginTop + dev.topPadding)
 
         case .pinLeft(let marginTop, let marginLeft):
 
             header.autoresizingMask = [.flexibleBottomMargin, .flexibleRightMargin]
-            header.frame.origin = CGPoint(x: marginLeft, y: marginTop)
+            header.frame.origin = CGPoint(x: marginLeft + dev.sidePadding, y: marginTop + dev.topPadding)
 
         case .pinRight(let marginTop, let marginRight):
 
             header.autoresizingMask = [.flexibleBottomMargin, .flexibleLeftMargin]
-            header.frame.origin = CGPoint(x: self.view.bounds.width - marginRight - header.bounds.width, y: marginTop)
+            header.frame.origin = CGPoint(x: self.view.bounds.width - marginRight - dev.sidePadding - header.bounds.width, y: marginTop + dev.topPadding)
         }
     }
 
@@ -691,5 +703,30 @@ open class GalleryViewController: UIPageViewController, ItemControllerDelegate {
         self.swipedToDismissCompletion?()
         self.overlayView.removeFromSuperview()
         self.dismiss(animated: false, completion: nil)
+    }
+}
+
+fileprivate extension UIDevice {
+    var hasNotch: Bool {
+        guard #available(iOS 11, *) else { return false }
+        
+        let bottom = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        return bottom > 0
+    }
+    
+    var notchPadding: CGFloat {
+        return (hasNotch ? 32 : 0)
+    }
+    
+    var topPadding: CGFloat {
+        guard orientation.isValidInterfaceOrientation else { return notchPadding }
+        
+        return (orientation.isPortrait ? notchPadding : 0)
+    }
+    
+    var sidePadding: CGFloat {
+        guard orientation.isValidInterfaceOrientation else { return 0 }
+        
+        return (orientation.isLandscape ? notchPadding : 0)
     }
 }
